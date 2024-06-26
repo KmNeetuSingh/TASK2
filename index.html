@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Impressive Todo App</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-image: url('https://media.istockphoto.com/id/1460614320/photo/black-dark-blue-night-sky-with-stars-white-cumulus-clouds-background-for-design.jpg?s=612x612&w=0&k=20&c=Wn32Pc9PzTBQ-ktCYAdN_vdRSbHAy847vovrjuRkc2Y=');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+      }
+
+      #todo-app {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: rgb(235, 231, 231) 0px 60px 40px -7px;
+        overflow: hidden;
+        width: 500px;
+      }
+
+      .header {
+        background-color: rgb(15, 15, 223);
+        color: #fff;
+        padding: 15px;
+        text-align: center;
+        font-size: 25px;
+      }
+
+      .todo-list {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .todo-item {
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        transition: background-color 0.3s ease;
+      }
+
+      .todo-item:hover {
+        background-color: #f9f9f9;
+      }
+
+      .todo-item input {
+        margin-right: 10px;
+      }
+
+      .todo-item button {
+        background-color: #e53935;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: background-color 0.3s ease;
+      }
+
+      .todo-item button:hover {
+        background-color: #c62828;
+      }
+
+      .add-todo {
+        display: flex;
+        padding: 15px;
+      }
+
+      .add-todo input {
+        flex: 1;
+        padding: 8px;
+        border: 5px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .add-todo button {
+        background-color: rgb(15, 15, 223);
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        margin-left: 10px;
+        transition: background-color 0.3s ease;
+      }
+
+      .add-todo button:hover {
+        background-color: #388e3c;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useState } = React;
+
+      let TodoItem = ({ todo, onDelete, onToggleComplete }) => {
+        return (
+          <li className="todo-item">
+            <input type="checkbox" checked={todo.completed} onChange={onToggleComplete} />
+            <span>{todo.text}</span>
+            <button onClick={onDelete}>Delete</button>
+          </li>
+        );
+      };
+
+      let TodoList = ({ todos, onDeleteTodo, onToggleComplete }) => {
+        return (
+          <ul className="todo-list">
+            {todos.map((todo, index) => (
+              <TodoItem
+                key={index}
+                todo={todo}
+                onDelete={() => onDeleteTodo(index)}
+                onToggleComplete={() => onToggleComplete(index)}
+              />
+            ))}
+          </ul>
+        );
+      };
+
+      let AddTodo = ({ onAddTodo }) => {
+        let [newTodo, setNewTodo] = useState('');
+
+        let handleInputChange = (e) => {
+          setNewTodo(e.target.value);
+        };
+
+        let handleAddTodo = () => {
+          if (newTodo.trim() !== '') {
+            onAddTodo(newTodo.trim());
+            setNewTodo('');
+          }
+        };
+
+        return (
+          <div className="add-todo">
+            <input
+              type="text"
+              placeholder="Add a new task..."
+              value={newTodo}
+              onChange={handleInputChange}
+            />
+            <button onClick={handleAddTodo}>Add Todo</button>
+          </div>
+        );
+      };
+
+      let TodoApp = () => {
+        let [todos, setTodos] = useState([]);
+
+        let handleAddTodo = (newTodo) => {
+          setTodos([...todos, { text: newTodo, completed: false }]);
+        };
+
+        let handleDeleteTodo = (index) => {
+          let newTodos = [...todos];
+          newTodos.splice(index, 1);
+          setTodos(newTodos);
+        };
+
+        let handleToggleComplete = (index) => {
+          let newTodos = [...todos];
+          newTodos[index].completed = !newTodos[index].completed;
+          setTodos(newTodos);
+        };
+
+        return (
+          <div id="todo-app">
+            <div className="header">
+              <h1>Todo App</h1>
+              <p>Hard Task Needs HardWay</p>
+            </div>
+            <TodoList
+              todos={todos}
+              onDeleteTodo={handleDeleteTodo}
+              onToggleComplete={handleToggleComplete}
+            />
+            <AddTodo onAddTodo={handleAddTodo} />
+          </div>
+        );
+      };
+
+      ReactDOM.render(<TodoApp />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
